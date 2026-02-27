@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>对话游戏</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        background: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+    .game-screen {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+    .bg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        z-index: 1;
+        background-color: #2a2a2a; /* 背景色备用 */
+    }
+    .character {
+        position: absolute;
+        left: 2%;
+        bottom: 0;
+        z-index: 2;
+        max-height: 70%;
+        width: auto;
+        background-color: #333; /* 角色图备用背景 */
+    }
+    .dialog-box {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 2%;
+        width: 94%;
+        min-height: 24%;
+        background: rgba(0, 0, 0, 0.9);
+        border: 2px solid #fff;
+        border-radius: 10px;
+        z-index: 3;
+        padding: 18px 22px;
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .name {
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #ffd700; /* 名字金色更醒目 */
+    }
+    .dialog-text {
+        font-size: 20px;
+        line-height: 1.7;
+        min-height: 3.4em; /* 保持对话区域高度稳定 */
+        word-break: break-word;
+    }
+    .click-tip {
+        position: absolute;
+        right: 18px;
+        bottom: 12px;
+        font-size: 14px;
+        color: #ccc;
+        animation: blink 1.5s infinite; /* 添加闪烁动画 */
+    }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    /* 错误状态提示 */
+    .error-tip {
+        color: #ff6b6b;
+        font-size: 12px;
+        text-align: center;
+        margin-top: 5px;
+    }
+</style>
+</head>
+
+<body>
+<div class="game-screen">
+    <!-- 使用占位图服务，确保图片总能显示 -->
+    <img class="bg" src="https://picsum.photos/1920/1080?random=1" alt="背景">
+    <img class="character" id="charImg" src="https://picsum.photos/400/600?random=2" alt="角色">
+
+    <div class="dialog-box">
+        <div class="name" id="name"></div>
+        <div class="dialog-text" id="text"></div>
+        <div class="click-tip">点击继续 ▶</div>
+        <!-- 添加图片加载错误提示（可选） -->
+        <div class="error-tip" id="errorTip" style="display: none;">图片加载失败，使用占位图</div>
+    </div>
+</div>
+
+<script>
+    const dialogList = [
+        { name: "？？？", text: "……", img: "https://picsum.photos/400/600?random=1" },
+        { name: "？？？", text: "终于见到你了，我等了你很久很久。", img: "https://picsum.photos/400/600?random=2" },
+        { name: "？？？", text: "你还记得我吗？", img: "https://picsum.photos/400/600?random=3" },
+        { name: "", text: "……", img: "https://picsum.photos/400/600?random=4" },
+        { name: "Alice", text: "我是Alice，从今天起，我会一直陪着你。", img: "https://picsum.photos/400/600?random=5" }
+    ];
+
+    let idx = 0;
+    let textDom = document.getElementById("text");
+    let nameDom = document.getElementById("name");
+    let charDom = document.getElementById("charImg");
+    let errorTip = document.getElementById("errorTip");
+    let typingTimer = null;
+    let isComplete = false;
+
+    // 图片加载错误处理
+    function handleImageError() {
+        if (errorTip) {
+            errorTip.style.display = 'block';
+            setTimeout(() => {
+                errorTip.style.display = 'none';
+            }, 2000);
+        }
+        // 可以设置一个默认图片
+        charDom.src = 'https://picsum.photos/400/600?random=default';
+    }
+
+    charDom.addEventListener('error', handleImageError);
+
+    function typeText(str) {
+        textDom.innerText = "";
+        isComplete = false;
+        let i = 0;
+        clearInterval(typingTimer);
+        typingTimer = setInterval(() => {
+            if (i < str.length) {
+                textDom.innerText += str[i];
+                i++;
+            } else {
+                clearInterval(typingTimer);
+                typingTimer = null;
+                isComplete = true;
+            }
+        }, 40);
+    }
+
+    function loadDialog() {
+        const d = dialogList[idx];
+        nameDom.innerText = d.name || " ";
+        typeText(d.text);
+        charDom.src = d.img;
+        // 重置错误提示
+        if (errorTip) errorTip.style.display = 'none';
+    }
+
+    document.addEventListener("click", () => {
+        // 如果正在打字，直接完成当前句子
+        if (typingTimer) {
+            clearInterval(typingTimer);
+            typingTimer = null;
+            textDom.innerText = dialogList[idx].text;
+            isComplete = true;
+        } 
+        // 如果当前句子已完成，进入下一条对话
+        else if (isComplete) {
+            idx++;
+            if (idx >= dialogList.length) idx = 0;
+            loadDialog();
+        }
+    });
+
+    // 初始加载
+    loadDialog();
+</script>
+</body>
+</html>
