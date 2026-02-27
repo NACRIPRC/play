@@ -92,8 +92,8 @@
 <body>
 <div class="game-screen">
     <!-- 使用占位图服务，确保图片总能显示 -->
-    <img class="bg" src="https://picsum.photos/1920/1080?random=1" alt="背景">
-    <img class="character" id="charImg" src="https://picsum.photos/400/600?random=2" alt="角色">
+    <img class="bg" src="bg.jpg" alt="背景">
+    <img class="character" id="charImg" src="bg.jpg" alt="角色">
 
     <div class="dialog-box">
         <div class="name" id="name"></div>
@@ -106,11 +106,11 @@
 
 <script>
     const dialogList = [
-        { name: "？？？", text: "……", img: "https://picsum.photos/400/600?random=1" },
-        { name: "？？？", text: "终于见到你了，我等了你很久很久。", img: "https://picsum.photos/400/600?random=2" },
-        { name: "？？？", text: "你还记得我吗？", img: "https://picsum.photos/400/600?random=3" },
-        { name: "", text: "……", img: "https://picsum.photos/400/600?random=4" },
-        { name: "Alice", text: "我是Alice，从今天起，我会一直陪着你。", img: "https://picsum.photos/400/600?random=5" }
+        { name: "？？？", text: "……", img: "chara1.jpg" },
+        { name: "？？？", text: "终于见到你了，我等了你很久很久。", img: "chara1.jpg" },
+        { name: "？？？", text: "你还记得我吗？", img: "chara1.jpg" },
+        { name: "", text: "……", img:"chara1.jpg" },
+        { name: "Alice", text: "我是Alice，从今天起，我会一直陪着你。", img: "chara1.jpg" }
     ];
 
     let idx = 0;
@@ -182,3 +182,4 @@
 </script>
 </body>
 </html>
+
